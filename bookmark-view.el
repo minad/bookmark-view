@@ -138,7 +138,7 @@ Return t if the current buffer is supposed to be bookmarked."
 (defun bookmark-view-save (name &optional no-overwrite)
   "Save current view under the given NAME.
 If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an already existing bookmark."
-  (interactive (list (read-string "Save view: " nil 'bookmark-history (bookmark-view-default-name))))
+  (interactive (list (bookmark-view-completing-read "Save view: " (bookmark-view-default-name))))
   (bookmark-store name (bookmark-view--get) no-overwrite))
 
 ;;;###autoload

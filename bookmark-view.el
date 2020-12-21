@@ -95,7 +95,7 @@ Return t if the current buffer is supposed to be bookmarked."
    (mapconcat (lambda (x) (buffer-name x)) (bookmark-view--buffers frame) " ")
    (format-time-string bookmark-view-name-format)))
 
-(defun bookmark-view-completing-read (prompt &optional default)
+(defun bookmark-view-read (prompt &optional default)
   "Prompting with PROMPT for bookmarked view. Return DEFAULT if user input is empty."
   (completing-read prompt
                    (bookmark-view-names)
@@ -129,7 +129,7 @@ Return t if the current buffer is supposed to be bookmarked."
 ;;;###autoload
 (defun bookmark-view (name)
   "If view bookmark NAME exists, open it, otherwise save current view under the given NAME."
-  (interactive (list (bookmark-view-completing-read "View: " (bookmark-view-default-name))))
+  (interactive (list (bookmark-view-read "View: " (bookmark-view-default-name))))
   (if (assoc name bookmark-alist)
       (bookmark-view-open name)
     (bookmark-view-save name)))
@@ -138,25 +138,25 @@ Return t if the current buffer is supposed to be bookmarked."
 (defun bookmark-view-save (name &optional no-overwrite)
   "Save current view under the given NAME.
 If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an already existing bookmark."
-  (interactive (list (bookmark-view-completing-read "Save view: " (bookmark-view-default-name))))
+  (interactive (list (bookmark-view-read "Save view: " (bookmark-view-default-name))))
   (bookmark-store name (bookmark-view--get) no-overwrite))
 
 ;;;###autoload
 (defun bookmark-view-open (bm)
   "Open view bookmark BM."
-  (interactive (list (bookmark-view-completing-read "Open view: ")))
+  (interactive (list (bookmark-view-read "Open view: ")))
   (bookmark-jump bm #'ignore))
 
 ;;;###autoload
 (defun bookmark-view-delete (name)
   "Delete view bookmark NAME."
-  (interactive (list (bookmark-view-completing-read "Delete view: ")))
+  (interactive (list (bookmark-view-read "Delete view: ")))
   (bookmark-delete name))
 
 ;;;###autoload
 (defun bookmark-view-rename (old &optional new)
   "Rename bookmark from OLD name to NEW name."
-  (interactive (list (bookmark-view-completing-read "Old view name: ")))
+  (interactive (list (bookmark-view-read "Old view name: ")))
   (bookmark-rename old new))
 
 ;;;###autoload

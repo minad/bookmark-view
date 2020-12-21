@@ -98,7 +98,11 @@ Return t if the current buffer is supposed to be bookmarked."
 (defun bookmark-view-read (prompt &optional default)
   "Prompting with PROMPT for bookmarked view. Return DEFAULT if user input is empty."
   (completing-read prompt
-                   (bookmark-view-names)
+                   (let ((names (bookmark-view-names)))
+                     (lambda (str pred action)
+                       (if (eq action 'metadata)
+                           '(metadata (category . bookmark))
+                         (complete-with-action action names str pred))))
                    nil nil nil 'bookmark-history default))
 
 ;;;###autoload

@@ -93,7 +93,7 @@ Return t if the current buffer is supposed to be bookmarked."
   (replace-regexp-in-string
    "<buffers>"
    (mapconcat (lambda (x) (buffer-name x)) (bookmark-view--buffers frame) " ")
-   (format-time-string bookmark-view-name-format)))
+   (format-time-string bookmark-view-name-format) t t))
 
 (defun bookmark-view-read (prompt &optional default)
   "Prompting with PROMPT for bookmarked view. Return DEFAULT if user input is empty."

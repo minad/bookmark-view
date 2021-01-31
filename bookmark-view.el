@@ -50,6 +50,9 @@
 Return t if the current buffer is supposed to be bookmarked."
   :type 'symbol)
 
+(defvar bookmark-view-history nil
+  "History of bookmark views used by `bookmark-view-read'.")
+
 (defun bookmark-view-filter-default ()
   "Default filter function called for each buffer.
 Return t if the current buffer is supposed to be bookmarked."
@@ -103,7 +106,7 @@ Return t if the current buffer is supposed to be bookmarked."
                        (if (eq action 'metadata)
                            '(metadata (category . bookmark))
                          (complete-with-action action names str pred))))
-                   nil nil nil 'bookmark-history default))
+                   nil nil nil 'bookmark-view-history default))
 
 ;;;###autoload
 (defun bookmark-view-names ()

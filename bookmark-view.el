@@ -183,13 +183,13 @@ If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an alre
 
 ;;;###autoload
 (defun bookmark-view-push ()
-  "Save current view as a bookmark with default name."
+  "Save current view as a bookmark with a default name."
   (interactive)
   (bookmark-view-save (bookmark-view-default-name) 'no-overwrite))
 
 ;;;###autoload
 (defun bookmark-view-pop ()
-  "Pop a poppable view from the bookmark list."
+  "Pop a view with a name matching `bookmark-view-name-regexp' from the bookmark list."
   (interactive)
   (let ((name (or (seq-some
                    (lambda (s)

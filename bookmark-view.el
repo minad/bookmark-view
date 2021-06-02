@@ -36,11 +36,11 @@
   :group 'convenience
   :prefix "bookmark-view-")
 
-(defcustom bookmark-view-name-format "[%Y-%m-%d-%H:%M] <buffers>"
+(defcustom bookmark-view-name-format "[<count> %Y-%m-%d %H:%M] <buffers>"
   "Name format used for default name of new view bookmarks."
   :type 'string)
 
-(defcustom bookmark-view-name-regexp "\\`\[[0-9:-]+\] "
+(defcustom bookmark-view-name-regexp "\\`\[[ 0-9:-]+\] "
   "Regexp matching view names that can be popped."
   :type 'string)
 
@@ -99,9 +99,16 @@ Return t if the current buffer is supposed to be bookmarked."
 (defun bookmark-view-default-name (&optional frame)
   "Default name for current view of FRAME."
   (replace-regexp-in-string
-   "<buffers>"
-   (mapconcat (lambda (x) (buffer-name x)) (bookmark-view--buffers frame) " ")
-   (format-time-string bookmark-view-name-format)
+   "<count>"
+   (number-to-string
+    (1+ (length (seq-filter
+                 (lambda (s) (string-match-p bookmark-view-name-regexp s))
+                 (bookmark-view-names)))))
+   (replace-regexp-in-string
+    "<buffers>"
+    (mapconcat (lambda (x) (buffer-name x)) (bookmark-view--buffers frame) " ")
+    (format-time-string bookmark-view-name-format)
+    'fixedcase 'literal)
    'fixedcase 'literal))
 
 (defun bookmark-view-read (prompt &optional default)

@@ -40,8 +40,8 @@
   "Name format used for default name of new view bookmarks."
   :type 'string)
 
-(defcustom bookmark-view-stack "V *stack*"
-  "Name of the default view bookmark stack."
+(defcustom bookmark-view-poppable "^V "
+  "Regexp matching view names that can be popped."
   :type 'string)
 
 (defcustom bookmark-view-filter-function
@@ -167,17 +167,20 @@ If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an alre
   (bookmark-rename old new))
 
 ;;;###autoload
-(defun bookmark-view-push (name)
-  "Push current view to the bookmark stack NAME."
-  (interactive (list bookmark-view-stack))
-  (bookmark-view-save name 'no-overwrite))
+(defun bookmark-view-push ()
+  "Save current view as a bookmark with default name."
+  (interactive)
+  (bookmark-view-save (bookmark-view-default-name) 'no-overwrite))
 
 ;;;###autoload
-(defun bookmark-view-pop (name)
-  "Pop current view from the bookmark stack NAME."
-  (interactive (list bookmark-view-stack))
-  (bookmark-view-open name)
-  (bookmark-delete name))
+(defun bookmark-view-pop ()
+  "Pop a poppable view from the bookmark list."
+  (interactive)
+  (let ((name (or (seq-some (lambda (s) (when (string-match-p bookmark-view-poppable s) s))
+                            (bookmark-view-names))
+                  (user-error "No poppable view."))))
+    (bookmark-view-open name)
+    (bookmark-delete name)))
 
 (provide 'bookmark-view)
 

@@ -161,7 +161,8 @@ Return t if the current buffer is supposed to be bookmarked."
   "Save current view under the given NAME.
 If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an already existing bookmark."
   (interactive (list (bookmark-view-read "Save view: " (bookmark-view-default-name))))
-  (bookmark-store name (bookmark-view--get) no-overwrite))
+  (bookmark-store name (bookmark-view--get) no-overwrite)
+  (message "View `%s' saved" name))
 
 ;;;###autoload
 (defun bookmark-view-open (bm)
@@ -173,7 +174,8 @@ If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an alre
 (defun bookmark-view-delete (name)
   "Delete view bookmark NAME."
   (interactive (list (bookmark-view-read "Delete view: ")))
-  (bookmark-delete name))
+  (bookmark-delete name)
+  (message "View `%s' deleted" name))
 
 ;;;###autoload
 (defun bookmark-view-rename (old &optional new)
@@ -197,7 +199,7 @@ If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an alre
                    (bookmark-view-names))
                   (user-error "View stack is empty"))))
     (bookmark-view-open name)
-    (bookmark-delete name)))
+    (bookmark-view-delete name)))
 
 (provide 'bookmark-view)
 ;;; bookmark-view.el ends here

@@ -36,11 +36,11 @@
   :group 'convenience
   :prefix "bookmark-view-")
 
-(defcustom bookmark-view-name-format "V %Y-%m-%d-%H:%M <buffers>"
+(defcustom bookmark-view-name-format "[%Y-%m-%d-%H:%M] <buffers>"
   "Name format used for default name of new view bookmarks."
   :type 'string)
 
-(defcustom bookmark-view-poppable "^V "
+(defcustom bookmark-view-name-regexp "\\`\[[0-9:-]+\] "
   "Regexp matching view names that can be popped."
   :type 'string)
 
@@ -71,13 +71,18 @@ Return t if the current buffer is supposed to be bookmarked."
 
 (defun bookmark-view--buffers (&optional frame)
   "Return list of buffers of FRAME to be bookmarked."
-  (seq-filter (lambda (x) (with-current-buffer x (funcall bookmark-view-filter-function)))
+  (seq-filter (lambda (x)
+                (with-current-buffer x
+                  (funcall bookmark-view-filter-function)))
               (mapcar #'window-buffer (window-list frame 'no-minibuf))))
 
 (defun bookmark-view--get (&optional frame)
   "Get view state of FRAME as a bookmark record."
   (let ((bufs (bookmark-view--buffers)))
-    (list (cons 'buffer (mapcar (lambda (x) (with-current-buffer x (bookmark-view--make-record))) bufs))
+    (list (cons 'buffer (mapcar (lambda (x)
+                                  (with-current-buffer x
+                                    (bookmark-view--make-record)))
+                                bufs))
           (cons 'filename (format "*View[%s]*" (length bufs)))
           (cons 'window (window-state-get (frame-root-window frame) 'writable))
           (cons 'handler #'bookmark-view-handler))))
@@ -96,7 +101,8 @@ Return t if the current buffer is supposed to be bookmarked."
   (replace-regexp-in-string
    "<buffers>"
    (mapconcat (lambda (x) (buffer-name x)) (bookmark-view--buffers frame) " ")
-   (format-time-string bookmark-view-name-format) t t))
+   (format-time-string bookmark-view-name-format)
+   'fixedcase 'literal))
 
 (defun bookmark-view-read (prompt &optional default)
   "Prompting with PROMPT for bookmarked view. Return DEFAULT if user input is empty."
@@ -112,7 +118,9 @@ Return t if the current buffer is supposed to be bookmarked."
 (defun bookmark-view-names ()
   "Return a list of names of all view bookmarks."
   (bookmark-maybe-load-default-file)
-  (mapcar #'car (seq-filter (lambda (x) (eq #'bookmark-view-handler (alist-get 'handler (cdr x)))) bookmark-alist)))
+  (mapcar #'car (seq-filter (lambda (x)
+                              (eq #'bookmark-view-handler (alist-get 'handler (cdr x))))
+                            bookmark-alist)))
 
 ;;;###autoload
 (defun bookmark-view-handler-fallback (bm)
@@ -176,9 +184,11 @@ If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an alre
 (defun bookmark-view-pop ()
   "Pop a poppable view from the bookmark list."
   (interactive)
-  (let ((name (or (seq-some (lambda (s) (when (string-match-p bookmark-view-poppable s) s))
-                            (bookmark-view-names))
-                  (user-error "No poppable view."))))
+  (let ((name (or (seq-some
+                   (lambda (s)
+                     (and (string-match-p bookmark-view-name-regexp s) s))
+                   (bookmark-view-names))
+                  (user-error "View stack is empty"))))
     (bookmark-view-open name)
     (bookmark-delete name)))
 

@@ -57,7 +57,7 @@ Return t if the current buffer is supposed to be bookmarked."
   "Default filter function called for each buffer.
 Return t if the current buffer is supposed to be bookmarked."
   (not (and (eq bookmark-make-record-function #'bookmark-make-record-default)
-            (string-match-p "^ " (buffer-name)))))
+            (string-match-p "\\` " (buffer-name)))))
 
 (defun bookmark-view--make-record ()
   "Return a new bookmark record for the current buffer, which must not have a backing file."
@@ -200,5 +200,4 @@ If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an alre
     (bookmark-delete name)))
 
 (provide 'bookmark-view)
-
 ;;; bookmark-view.el ends here

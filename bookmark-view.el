@@ -126,9 +126,7 @@ For TRANSFORM non-nil return transformed bookmark name."
                      (lambda (str pred action)
                        (if (eq action 'metadata)
                            `(metadata (category . bookmark)
-                                      (group-function . ,#'bookmark-view--group)
-                                      (display-sort-function . ,#'identity)
-                                      (cycle-sort-function . ,#'identity))
+                                      (group-function . ,#'bookmark-view--group))
                          (complete-with-action action names str pred))))
                    nil nil nil 'bookmark-view-history default))
 
@@ -198,7 +196,10 @@ If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an alre
 (defun bookmark-view-push ()
   "Save current view as a bookmark with a default name."
   (interactive)
-  (bookmark-view-save (bookmark-view-default-name) 'no-overwrite))
+  (let ((name (bookmark-view-default-name)))
+    (bookmark-view-save name 'no-overwrite)
+    ;; Add to view history to mark the new item as recent
+    (add-to-history 'bookmark-view-history name)))
 
 ;;;###autoload
 (defun bookmark-view-pop ()

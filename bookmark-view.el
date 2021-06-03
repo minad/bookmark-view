@@ -111,13 +111,24 @@ Return t if the current buffer is supposed to be bookmarked."
     'fixedcase 'literal)
    'fixedcase 'literal))
 
+(defun bookmark-view--group (name transform)
+  "Group function for bookmark named NAME.
+For TRANSFORM non-nil return transformed bookmark name."
+  (cond
+   (transform name)
+   ((string-match-p bookmark-view-name-regexp name) "Stack")
+   (t "Named")))
+
 (defun bookmark-view-read (prompt &optional default)
   "Prompting with PROMPT for bookmarked view. Return DEFAULT if user input is empty."
   (completing-read prompt
                    (let ((names (bookmark-view-names)))
                      (lambda (str pred action)
                        (if (eq action 'metadata)
-                           '(metadata (category . bookmark))
+                           `(metadata (category . bookmark)
+                                      (group-function . ,#'bookmark-view--group)
+                                      (display-sort-function . ,#'identity)
+                                      (cycle-sort-function . ,#'identity))
                          (complete-with-action action names str pred))))
                    nil nil nil 'bookmark-view-history default))
 

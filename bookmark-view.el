@@ -106,7 +106,8 @@ Return t if the current buffer is supposed to be bookmarked."
          (bookmark-view-names))))
    (replace-regexp-in-string
     "<buffers>"
-    (mapconcat #'buffer-name (bookmark-view--buffers frame) " ")
+    (string-join (sort (mapcar #'buffer-name (bookmark-view--buffers frame))
+                       #'string-lessp) " ")
     (format-time-string bookmark-view-name-format)
     'fixedcase 'literal)
    'fixedcase 'literal))

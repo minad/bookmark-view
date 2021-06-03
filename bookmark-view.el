@@ -101,12 +101,12 @@ Return t if the current buffer is supposed to be bookmarked."
   (replace-regexp-in-string
    "<count>"
    (number-to-string
-    (1+ (length (seq-filter
-                 (lambda (s) (string-match-p bookmark-view-name-regexp s))
-                 (bookmark-view-names)))))
+    (1+ (seq-count
+         (apply-partially #'string-match-p bookmark-view-name-regexp)
+         (bookmark-view-names))))
    (replace-regexp-in-string
     "<buffers>"
-    (mapconcat (lambda (x) (buffer-name x)) (bookmark-view--buffers frame) " ")
+    (mapconcat #'buffer-name (bookmark-view--buffers frame) " ")
     (format-time-string bookmark-view-name-format)
     'fixedcase 'literal)
    'fixedcase 'literal))
@@ -205,9 +205,8 @@ If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an alre
 (defun bookmark-view-pop ()
   "Pop a view with a name matching `bookmark-view-name-regexp' from the bookmark list."
   (interactive)
-  (let ((name (or (seq-some
-                   (lambda (s)
-                     (and (string-match-p bookmark-view-name-regexp s) s))
+  (let ((name (or (seq-find
+                   (apply-partially #'string-match-p bookmark-view-name-regexp)
                    (bookmark-view-names))
                   (user-error "View stack is empty"))))
     (bookmark-view-open name)

@@ -36,11 +36,11 @@
   :group 'convenience
   :prefix "bookmark-view-")
 
-(defcustom bookmark-view-name-format "[<count> %Y-%m-%d %H:%M] <buffers>"
+(defcustom bookmark-view-name-format "<count> [%Y-%m-%d %H:%M] <buffers>"
   "Name format used for default name of new view bookmarks."
   :type 'string)
 
-(defcustom bookmark-view-name-regexp "\\`\[[ 0-9:-]+\] "
+(defcustom bookmark-view-name-regexp "\\`[0-9]+ \\[[ 0-9:-]+\\] "
   "Regexp matching view names that can be popped."
   :type 'string)
 

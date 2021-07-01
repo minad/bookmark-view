@@ -30,6 +30,8 @@
 
 (require 'bookmark)
 (require 'seq)
+(eval-when-compile
+  (require 'subr-x))
 
 (defgroup bookmark-view nil
   "Bookmark views."
@@ -63,10 +65,9 @@ Return t if the current buffer is supposed to be bookmarked."
   "Return a new bookmark record for the current buffer, which must not have a backing file."
   (if (and (not buffer-file-name)
            (eq bookmark-make-record-function #'bookmark-make-record-default))
-      (cons
-       (bookmark-buffer-name)
-       (list (cons 'buffer (buffer-name))
-             (cons 'handler #'bookmark-view-handler-fallback)))
+      `(,(bookmark-buffer-name)
+        (buffer . ,(buffer-name))
+        (handler . ,#'bookmark-view-handler-fallback))
     (bookmark-make-record)))
 
 (defun bookmark-view--buffers (&optional frame)
@@ -79,13 +80,13 @@ Return t if the current buffer is supposed to be bookmarked."
 (defun bookmark-view--get (&optional frame)
   "Get view state of FRAME as a bookmark record."
   (let ((bufs (bookmark-view--buffers)))
-    (list (cons 'buffer (mapcar (lambda (x)
-                                  (with-current-buffer x
-                                    (bookmark-view--make-record)))
-                                bufs))
-          (cons 'filename (format "*View[%s]*" (length bufs)))
-          (cons 'window (window-state-get (frame-root-window frame) 'writable))
-          (cons 'handler #'bookmark-view-handler))))
+    `((buffer . ,(mapcar (lambda (x)
+                           (with-current-buffer x
+                             (bookmark-view--make-record)))
+                         bufs))
+      (filename . ,(format "*View[%s]*" (length bufs)))
+      (window . ,(window-state-get (frame-root-window frame) 'writable))
+      (handler . ,#'bookmark-view-handler))))
 
 (defun bookmark-view--put (state &optional frame)
   "Put view STATE into FRAME, restoring windows and buffers."

@@ -109,7 +109,8 @@ Return t if the current buffer is supposed to be bookmarked."
     "<buffers>"
     (string-join (sort (mapcar #'buffer-name (bookmark-view--buffers frame))
                        #'string-lessp) " ")
-    (format-time-string bookmark-view-name-format)
+    (let ((system-time-locale "C"))
+      (format-time-string bookmark-view-name-format))
     'fixedcase 'literal)
    'fixedcase 'literal))
 

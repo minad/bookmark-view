@@ -1,5 +1,8 @@
 * bookmark-view.el - Use bookmarks to persist the current view
 
+#+html: <a href="https://melpa.org/#/bookmark-view"><img alt="MELPA" src="https://melpa.org/packages/bookmark-view-badge.svg"/></a>
+#+html: <a href="https://stable.melpa.org/#/bookmark-view"><img alt="MELPA Stable" src="https://stable.melpa.org/packages/bookmark-view-badge.svg"/></a>
+
 This package provides commands which allow storing the window configuration
 (called a view) as an Emacs bookmark. This way the view is automatically
 persisted and can be restored after restart.

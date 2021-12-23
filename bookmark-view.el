@@ -64,7 +64,8 @@ Return t if the current buffer is supposed to be bookmarked."
             (string-match-p "\\` " (buffer-name)))))
 
 (defun bookmark-view--make-record ()
-  "Return a new bookmark record for the current buffer, which must not have a backing file."
+  "Return a new bookmark record for the current buffer.
+The current buffer must not have a backing file."
   (if (and (not buffer-file-name)
            (eq bookmark-make-record-function #'bookmark-make-record-default))
       `(,(bookmark-buffer-name)
@@ -125,7 +126,8 @@ For TRANSFORM non-nil return transformed bookmark name."
    (t "Named")))
 
 (defun bookmark-view-read (prompt &optional default)
-  "Prompting with PROMPT for bookmarked view. Return DEFAULT if user input is empty."
+  "Prompting with PROMPT for bookmarked view.
+Return DEFAULT if user input is empty."
   (completing-read prompt
                    (let ((names (bookmark-view-names)))
                      (lambda (str pred action)
@@ -164,7 +166,7 @@ For TRANSFORM non-nil return transformed bookmark name."
 
 ;;;###autoload
 (defun bookmark-view (name)
-  "If view bookmark NAME exists, open it, otherwise save current view under the given NAME."
+  "If view bookmark NAME exists, open it, otherwise save current view."
   (interactive (list (bookmark-view-read "View: " (bookmark-view-default-name))))
   (if (assoc name bookmark-alist)
       (bookmark-view-open name)
@@ -173,7 +175,8 @@ For TRANSFORM non-nil return transformed bookmark name."
 ;;;###autoload
 (defun bookmark-view-save (name &optional no-overwrite)
   "Save current view under the given NAME.
-If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an already existing bookmark."
+If NO-OVERWRITE is non-nil push to the bookmark list
+without overwriting an already existing bookmark."
   (interactive (list (bookmark-view-read "Save view: " (bookmark-view-default-name))))
   (bookmark-store name (bookmark-view--get) no-overwrite)
   (message "View `%s' saved" name))
@@ -208,7 +211,7 @@ If NO-OVERWRITE is non-nil push to the bookmark list without overwriting an alre
 
 ;;;###autoload
 (defun bookmark-view-pop ()
-  "Pop a view with a name matching `bookmark-view-name-regexp' from the bookmark list."
+  "Pop a bookmark view with a name matching `bookmark-view-name-regexp'."
   (interactive)
   (let ((name (or (seq-find
                    (apply-partially #'string-match-p bookmark-view-name-regexp)

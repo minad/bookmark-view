@@ -5,8 +5,7 @@
 #+html: <a href="https://stable.melpa.org/#/bookmark-view"><img alt="MELPA Stable" src="https://stable.melpa.org/packages/bookmark-view-badge.svg"/></a>
 
 This package provides commands which allow storing the window configuration
-(called a view) as an Emacs bookmark. This way the view is automatically
-persisted and can be restored after restart.
+(called a view) as an Emacs bookmark. The view can be restored after restart.
 
 There are alternative view packages like burly, which are more ambitious.
 bookmark-view aims to be the simplest thing that marries bookmarks and window
@@ -22,3 +21,6 @@ the available commands.
 
 This package works well together with my [[https://github.com/minad/consult][Consult package]], which can be
 configured such that =consult-buffer= directly includes the list of views.
+
+See also the newer variant of this package, called [[https://github.com/minad/tab-bookmark][tab-bookmark]], which has
+the ability to store and restore the window configuration of the current tab.

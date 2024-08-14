@@ -72,6 +72,9 @@ The current buffer must not have a backing file."
            (eq bookmark-make-record-function #'bookmark-make-record-default))
       `(,(bookmark-buffer-name)
         (buffer . ,(buffer-name))
+        ;; save buffer dir for dired-mode buffers
+        (buffer-dir . ,(if (equal major-mode 'dired-mode)
+                           default-directory nil))
         (handler . ,#'bookmark-view-handler-fallback))
     (bookmark-make-record)))
 
@@ -183,10 +186,44 @@ without overwriting an already existing bookmark."
   (bookmark-store name (bookmark-view--get) no-overwrite)
   (message "View `%s' saved" name))
 
+(defun bookmark-view-update-buffer-point (elt)
+  (when (eq (car-safe elt) 'buffer)
+    (let ((buffer (get-buffer (nth 1 elt))))
+      (when (buffer-live-p buffer)
+        (with-current-buffer buffer
+          (mapc (lambda (elt)
+                  (when (eq (car-safe elt) 'point)
+                    (setcdr elt (point))))
+                (cddr elt)))))))
+
 ;;;###autoload
 (defun bookmark-view-open (bm)
   "Open view bookmark BM."
   (interactive (list (bookmark-view-read "Open view: ")))
+  ;; update point for open buffers
+  (mapc (lambda (elt)
+          (if (eq (car-safe elt) 'buffer)
+              ;; create non-existing dired buffer
+              (mapc (lambda (elt)
+                      (let* ((buffer-alist (cdr elt))
+                             (buffer-cons (assoc 'buffer buffer-alist))
+                             (buffer-dir (cdr (assoc 'buffer-dir buffer-alist))))
+                        (when buffer-dir
+                          (unless (and buffer-cons (get-buffer (cdr buffer-cons)))
+                            (dired buffer-dir)))))
+                    (cdr elt))
+            (when (eq (car-safe elt) 'window)
+              (mapc (lambda (elt)
+                      (if (eq (car-safe elt) 'leaf)
+                          (mapc (lambda (elt)
+                                  (when (eq (car-safe elt) 'buffer)
+                                    (bookmark-view-update-buffer-point elt)))
+                                (cdr elt))
+                        (when (eq (car-safe elt) 'buffer)
+                          (bookmark-view-update-buffer-point elt))))
+                    (cdr elt))
+              (cdr elt))))
+        (cdr (bookmark-get-bookmark bm)))
   (bookmark-jump bm #'ignore))
 
 ;;;###autoload

@@ -1,6 +1,6 @@
 ;;; bookmark-view.el --- Bookmark views -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020-2024 Daniel Mendler
+;; Copyright (C) 2020-2025 Daniel Mendler
 
 ;; Author: Daniel Mendler
 ;; Created: 2020
